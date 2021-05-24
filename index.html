@@ -22,7 +22,9 @@
             background-repeat: no-repeat;
             background-size: cover;
             background-position: bottom;
-            font-family: 'Sigmar One', cursive;
+            font-family: 'Sigmar One', '微軟正黑體';
+            /* font-family: '; */
+
         }
 
         .cursorX {
@@ -312,6 +314,7 @@
             </div>
         </div>
     </div>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const roles = document.getElementsByClassName('role')
         const seats = document.getElementsByClassName('seat')
@@ -329,6 +332,15 @@
         const rand = (min, max) => {
             return Math.round(Math.random() * (max - min)) + min
         }
+
+        Swal.fire({
+            title: '說明',
+            text: '用「z鍵及x鍵」切換游標圖式，點擊動物們想點的餐點，給對餐點 +1 分，給錯餐點 -1 分。',
+            imageUrl: 'https://github.com/dear17530/click-game/blob/main/keyboard.gif?raw=true',
+            imageWidth: 400,
+            imageHeight: 200,
+            imageAlt: '用「z鍵及x鍵」切換游標圖式，點擊動物們想點的餐點，給對餐點 +1 分，給錯餐點 -1 分。',
+        })
 
         let score = 0
         let countdown = 10
@@ -372,8 +384,8 @@
             countdown--
             time.innerText = `Time:${countdown}`
             if (countdown <= 0) {
+                data = []
                 clearInterval(timer)
-                alert(`你得到${score}分`)
                 start.disabled = false
                 for (let i = 0; i < 9; i++) {
                     roles[i].style.backgroundImage = ''
@@ -383,21 +395,42 @@
                     p[i].innerText = ''
                 }
                 if (score > highscore.score) {
-                    highscore.score = score
-                    highscore.name = prompt('最高分! 請輸入名字')
-                    if (name === null || name.length === 0) {
-                        name = 'nobody'
-                    }
-                    textHighscorePlayer.innerText = '　NAME:' + highscore.name
-                    textHighscore.innerText = '　SCORE:' + highscore.score
-                    localStorage.setItem('wam', JSON.stringify(highscore))
+                    Swal.fire({
+                        title: `你得到${score}分`,
+                        input: 'text',
+                        inputLabel: '你的名字',
+                        inputPlaceholder: '請輸入你的名字',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    }).then(function (result) {
+                        if (result.value == null) {
+                            highscore.name = 'nobody'
+                        } else {
+                            highscore.name = result.value
+                        }
+                        highscore.score = score
+                        textHighscorePlayer.innerText = '　NAME:' + highscore.name
+                        textHighscore.innerText = '　SCORE:' + highscore.score
+                        localStorage.setItem('wam', JSON.stringify(highscore))
+                    })
+                } else {
+                    Swal.fire({
+                        title: '恭喜過關',
+                        text: `你得到${score}分`,
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    })
                 }
             }
         }
-
-        console.log(data);
-
-
 
         window.onload = function () {
             for (let i = 0; i < 9; i++) {
@@ -440,9 +473,11 @@
         document.onkeydown = (event) => {
             if (event.key == 'z' || event.key == 'Z') {
                 body.classList.add('cursorZ')
+                body.classList.remove('cursorX')
             }
             if (event.key == 'x' || event.key == 'X') {
-                body.classList.replace('cursorZ', 'cursorX')
+                body.classList.add('cursorX')
+                body.classList.remove('cursorZ')
             }
         }
     </script>
