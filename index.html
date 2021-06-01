@@ -330,7 +330,7 @@
         })
 
         let score = 0
-        let countdown = 10
+        let countdown = 30
         let highscore = { name: '', score: 0 }
         const highStorage = JSON.parse(localStorage.getItem('wam'))
         if (highStorage !== null) {
@@ -341,7 +341,7 @@
         start.onclick = () => {
             start.disabled = true
             score = 0
-            countdown = 10
+            countdown = 30
             textScore.innerText = `Score:${score}`
             time.innerText = `Time:${countdown}`
             timer = setInterval(gameStart, 1000)
